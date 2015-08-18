@@ -94,7 +94,27 @@ describe Rack::Rsync do
 
       it_behaves_like "default files"
       it_behaves_like(
-        "files", 
+        "files",
+        File.join(SOURCE_DIR, "new_file"),
+        File.join(DESTINATION_DIR, "new_file")
+      )
+    end
+
+    context "when condition is not given" do
+      let(:rsync_app) do
+        Rack::Rsync.new(
+          lint,
+          source_dir + "/",
+          destination_dir + "/",
+          options
+        )
+      end
+
+      after { FileUtils.rm_f(new_file) }
+
+      it_behaves_like "default files"
+      it_behaves_like(
+        "files",
         File.join(SOURCE_DIR, "new_file"),
         File.join(DESTINATION_DIR, "new_file")
       )
