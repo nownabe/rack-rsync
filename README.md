@@ -1,8 +1,9 @@
 # Rack::Rsync
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rack/rsync`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Gem Version](https://badge.fury.io/rb/rack-rsync.svg)](http://badge.fury.io/rb/rack-rsync)
+[![Build Status](https://travis-ci.org/nownabe/rack-rsync.svg)](https://travis-ci.org/nownabe/rack-rsync)
 
-TODO: Delete this and the text above, and describe your gem
+A rack middleware to sync files using rsync.
 
 ## Installation
 
@@ -22,7 +23,19 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Sync always:
+
+```ruby
+use Rack::Rsync(source, destination, "-a", "--delete")
+```
+
+Sync with conditions:
+
+```ruby
+use Rack::Rsync(source, destination, "-a", "--delete") do |env|
+  env["REQUEST_METHOD"] == "POST"
+end
+```
 
 ## Development
 
