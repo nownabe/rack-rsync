@@ -9,7 +9,7 @@ module Rack
       @source      = source
       @destination = destination
       @options     = [*options]
-      @condition   = condition
+      @condition   = condition || Proc.new { true }
     end
 
     def call(env)
