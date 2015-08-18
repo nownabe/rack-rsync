@@ -29,7 +29,6 @@ describe Rack::Rsync do
       end
     end
 
-    let(:condition) { Proc.new { true } }
     let(:lint) { Rack::Lint.new(app_class.new(&pre_process)) }
     let(:options) { ["-a"] }
     let(:pre_process) { Proc.new {} }
@@ -47,6 +46,11 @@ describe Rack::Rsync do
 
     let!(:source_dir) { SOURCE_DIR }
     let!(:destination_dir) { DESTINATION_DIR }
+
+    let!(:new_file) { File.join(source_dir, "new_file") }
+    let(:pre_process) do
+      Proc.new { FileUtils.touch(new_file) }
+    end
 
     before do
       FileUtils.mkdir_p(destination_dir)
@@ -84,21 +88,27 @@ describe Rack::Rsync do
       end
     end
 
-    it_behaves_like "default files"
-
-    context "when satisfy condition" do
-      let!(:new_file) { File.join(source_dir, "new_file") }
-      let(:pre_process) do
-        Proc.new { FileUtils.touch(new_file) }
-      end
-
+    context "when condition is satisfied" do
+      let(:condition) { Proc.new { true } }
       after { FileUtils.rm_f(new_file) }
 
+      it_behaves_like "default files"
       it_behaves_like(
         "files", 
         File.join(SOURCE_DIR, "new_file"),
         File.join(DESTINATION_DIR, "new_file")
       )
+    end
+
+    context "when condition isn't satisfied" do
+      let(:condition) { Proc.new { false } }
+      let(:destination_file) { new_file.sub(source_dir, destination_dir) }
+
+      describe "destination files" do
+        it "should not exist" do
+          expect(File.exist?(destination_file)).to be_falsey
+        end
+      end
     end
   end
 end
