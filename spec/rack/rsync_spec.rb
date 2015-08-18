@@ -89,7 +89,7 @@ describe Rack::Rsync do
     end
 
     context "when condition is satisfied" do
-      let(:condition) { Proc.new { true } }
+      let(:condition) { Proc.new { |env| env["REQUEST_METHOD"] == "GET" } }
       after { FileUtils.rm_f(new_file) }
 
       it_behaves_like "default files"
